@@ -9,6 +9,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JButton;
@@ -22,8 +24,6 @@ public class UI extends JFrame {
     protected JTextField inputTextFiled;
     protected JTextField tNameTextField;
     protected JTextField cNametextField;
-    protected JTextField textField_4;
-    protected JTextField textField_5;
     protected JPanel contentPane;
     protected JLabel createLable;
     protected JMenuBar menuBar;
@@ -38,7 +38,9 @@ public class UI extends JFrame {
     protected JLabel label_3;
     protected JButton outputButton;
     protected JLabel label_4;
-
+    protected MultiSelectComboBox<String> multiSelectMainComboBox; 
+    protected MultiSelectComboBox<String> multiSelectSubComboBox;
+    protected JButton NextButton;
 	/**
 	 * Create the frame.
 	 */
@@ -99,7 +101,7 @@ public class UI extends JFrame {
 		contentPane.add(cNameLable);
 		
 		cNametextField = new JTextField();
-		cNametextField.setBounds(74, 178, 145, 18);
+		cNametextField.setBounds(74, 178, 145, 25);
 		contentPane.add(cNametextField);
 		cNametextField.setColumns(10);
 		
@@ -116,26 +118,16 @@ public class UI extends JFrame {
 		
 		confirmButton = new JButton("\u786E\u8BA4");
 		
-		confirmButton.setBounds(403, 209, 130, 23);
+		confirmButton.setBounds(424, 251, 130, 23);
 		contentPane.add(confirmButton);
 		
 		label_2 = new JLabel("\u4E3B\u8868\u4E00\u5BF9\u591A");
 		label_2.setBounds(10, 213, 66, 15);
 		contentPane.add(label_2);
 		
-		textField_4 = new JTextField();
-		textField_4.setBounds(74, 210, 145, 21);
-		contentPane.add(textField_4);
-		textField_4.setColumns(10);
-		
 		label_3 = new JLabel("\u5B50\u8868\u591A\u5BF9\u4E00");
 		label_3.setBounds(10, 255, 66, 15);
 		contentPane.add(label_3);
-		
-		textField_5 = new JTextField();
-		textField_5.setBounds(74, 252, 145, 21);
-		contentPane.add(textField_5);
-		textField_5.setColumns(10);
 		
 		outputButton = new JButton("\u8F93\u51FA\u76EE\u5F55");
 		
@@ -145,6 +137,37 @@ public class UI extends JFrame {
 		label_4 = new JLabel("\u5982\u679C\u4E0D\u8BBE\u7F6E\uFF0C\u5219\u9ED8\u8BA4\u4E3A\u8F93\u51FA\u5230\u684C\u9762");
 		label_4.setBounds(130, 94, 200, 15);
 		contentPane.add(label_4);
+		
+		//主表 多选下拉框
+		multiSelectMainComboBox = new MultiSelectComboBox<String>();
+		multiSelectMainComboBox.setSelectionForeground(Color.RED);
+		multiSelectMainComboBox.setSelectionBackground(Color.LIGHT_GRAY);
+		multiSelectMainComboBox.setPreferredSize(new Dimension(300, 26));
+		multiSelectMainComboBox.setPopupBackground(Color.WHITE);
+		multiSelectMainComboBox.setForegroundAndToPopup(Color.BLACK);
+		multiSelectMainComboBox.setBounds(74, 213, 145, 22);
+		contentPane.add(multiSelectMainComboBox);
+		
+		
+		//子表多选下拉框
+		multiSelectSubComboBox = new MultiSelectComboBox<>();
+		multiSelectSubComboBox.setPreferredSize(new Dimension(300, 26));
+		multiSelectSubComboBox.setBounds(74, 252, 145, 22);
+
+		// 设置颜色
+		multiSelectSubComboBox.setForegroundAndToPopup(Color.BLACK);
+		// comboBox.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		// comboBox.setPopupBorder(BorderFactory.createLineBorder(Color.RED));
+		multiSelectSubComboBox.setPopupBackground(Color.WHITE);
+		multiSelectSubComboBox.setSelectionBackground(Color.lightGray);
+		multiSelectSubComboBox.setSelectionForeground(Color.RED);
+		
+		contentPane.add(multiSelectSubComboBox);
+		
+		NextButton = new JButton("\u4E0B\u4E00\u4E2A");
+		NextButton.setBounds(237, 179, 93, 23);
+		contentPane.add(NextButton);
+		
 		setVisible(true);
 	}
 	
@@ -160,6 +183,5 @@ public class UI extends JFrame {
 				}
 			}
 		});
-	}
-*/
+	}*/
 }

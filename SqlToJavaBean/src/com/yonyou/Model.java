@@ -6,6 +6,8 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileSystemView;
 
 public class Model {
@@ -39,6 +41,23 @@ public class Model {
 				}
 			}
 		});
+		
+		/**
+		 * 下一个的监听器
+		 */
+		
+		view.NextButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == view.NextButton) {
+					fixTable();
+				}
+				
+			}
+		});
+		
+		
 
 		/**
 		 * 确认键监听器
@@ -51,6 +70,62 @@ public class Model {
 				}
 			}
 		});
+		
+		view.multiSelectMainComboBox.addPopupMenuListener(new PopupMenuListener() {
+
+			@Override
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			}
+
+			@Override
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+				System.out.println("组表选择的值：" + view.multiSelectMainComboBox.getSelectedItemsString());
+			}
+
+			@Override
+			public void popupMenuCanceled(PopupMenuEvent e) {
+			}
+		});
+		
+		view.multiSelectSubComboBox.addPopupMenuListener(new PopupMenuListener() {
+
+			@Override
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			}
+
+			@Override
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+				System.out.println("子表选择的值：" + view.multiSelectSubComboBox.getSelectedItemsString());
+			}
+
+			@Override
+			public void popupMenuCanceled(PopupMenuEvent e) {
+			}
+		});
+		
+		
+		
+		
+		
+	}
+
+	
+	
+	
+	
+	protected void fixTable() {
+		int i = 0;
+		for (TClass t : test.listTable) {
+			t.toString();
+		}
+		view.tNamelable.setText(test.getTableName(test.listTable, i));
+		String str = view.tNameTextField.getText();
+		if(str.equals("")){
+			test.fixTableName(test.listTable, i, str);
+		}
+		i++;
+		
+		
 	}
 
 	public void outputDirectory() {
@@ -71,6 +146,12 @@ public class Model {
 
 	// 选择文件目录
 	public void chooseDirectory() {
+		view.multiSelectSubComboBox.addItem("1");
+		view.multiSelectSubComboBox.addItem("2");
+		view.multiSelectSubComboBox.addItem("3");
+		view.multiSelectSubComboBox.addItem("4");
+		
+		
 		if (flag == 1) {
 			FileSystemView fsv = FileSystemView.getFileSystemView();
 			System.out.println(fsv.getHomeDirectory()); // 得到桌面路径

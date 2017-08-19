@@ -22,6 +22,7 @@ public class ModelRelease{
 
 	Set<DBFiled> DBFiledSet;
 	
+	
 	String[] parentMainClassField = { "dr", "bill_code", "bill_type", "bill_state", "creatorid", "creator", "createtime",
 			"modifierid", "modifier", "modifytime", "reviewerid", "reviewer", "reviewtime", "tenantid", "company_id",
 			"ts", "attachMgr" };
@@ -35,6 +36,9 @@ public class ModelRelease{
 
 	// listBean保存读取的所有数据表名和数据字段
 	List<String> listBean;
+	
+	//保存table表名和表的注释
+	List<TClass> listTable = new ArrayList<>();
 	
 	// listBean1保存读取的数据表1信息
 	List<String> listBean1;
@@ -93,9 +97,10 @@ public class ModelRelease{
 	 */
 
 	public void selectDBFiled() {
-		DBFiled dbFiled = null;
-		listBean = new ArrayList<String>();
 		DBFiledSet = new LinkedHashSet<DBFiled>();
+		DBFiled dbFiled = null;
+		TClass t = null;
+		listBean = new ArrayList<String>();
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).contains(",")) {
 				dbFiled = new DBFiled();
@@ -103,7 +108,9 @@ public class ModelRelease{
 
 			if (list.get(i).contains("CREATE") && list.get(i + 1).contains("TABLE")) {
 				// 这里把数据表的表名存进去，以#作为标识
-				listBean.add(reMoveVar(list.get(i + 2)) + "#");
+				t = new TClass();
+				t.setTableName(reMoveVar(list.get(i + 2)));
+				//listBean.add(reMoveVar(list.get(i + 2)) + "#");
 				dbFiled = new DBFiled();
 
 			} else if (list.get(i).contains("varchar") || list.get(i).contains("int")
@@ -115,37 +122,52 @@ public class ModelRelease{
 			} else if (list.get(i).equals("COMMENT") && !list.get(i).equals("COMMENT=")) {
 				// 把字段的注释加进去
 				dbFiled.setVarDesc(reMoveVar(list.get(i + 1)));
+			}else if(list.get(i).contains("COMMENT=")){
+				// 把表的注释加进去
+				String str = list.get(i);
+				String string = str.substring(str.indexOf("'") + 1, str.length() - 1);
+				t.setTableDesc(string);
+				if(t!=null){
+					listTable.add(t);
+				}
+				//listBean.add(string);
 			}
 
-			if (dbFiled != null) {
+			if (dbFiled != null&&dbFiled.getVarType()!=null) {
 				DBFiledSet.add(dbFiled);
 			}
 		}
 
+		System.out.println("---------------打印出所有的属性---------------");
+
+		for (DBFiled b : DBFiledSet) {
+			System.out.println(b.toString());
+		}
 		
-		/*  System.out.println("---------------打印出所有的属性---------------");
-		  
-		  
-		  for ( b : listVar) { System.out.println(b.toString()); }*/
-		  
-		  
-		  
-		 
-		if (list.get(list.size() - 1).contains("COMMENT=")) {
+
+	/*	if (list.get(list.size() - 1).contains("COMMENT=")) {
 			// 把表的注释加进去
 			String str = list.get(list.size() - 1);
 			String string = str.substring(str.indexOf("'") + 1, str.length() - 1);
 			listBean.add(string);
-		}
+		}*/
 
-		System.out.println("------------筛选sql字段-----------------");
-		/*
-		 * for (String s : listBean) { System.out.print(s + " "); }
-		 * 
-		 * System.out.println("\n--------------listbean中内容-------------------");
-		 */
+		System.out.println("\n--------------listTable中内容-------------------");
+		
+		  for (TClass s : listTable) { System.out.println(s.toString()); }
+		  
+		 
 	}
 
+	//获取表名
+	public String getTableName(List<TClass> list,int i){
+		return list.get(i).getTableName();
+	}
+	//修改表名
+	public void fixTableName(List<TClass> list,int i,String str){
+		 list.get(i).setTableName(str);
+	}
+	
 
 	/**
 	 * 写入文件
@@ -408,15 +430,15 @@ public class ModelRelease{
 
 	// ---------------------------------------------------------------
 
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		ModelRelease test = new ModelRelease();
 
 		String filePath = "C:\\Users\\zhaowenr\\Desktop\\sqlToJavaBean\\";
-		String file = filePath + "ss_scy_security_check.sql";
+		String file = filePath + "ss_quy_subsection_acpt.sql";
 		test.readFile(file);
 		test.selectDBFiled();
 		test.writeFile(filePath, "SuperMainEntity", file);
-	}*/
+	}
 	 
 
 }
