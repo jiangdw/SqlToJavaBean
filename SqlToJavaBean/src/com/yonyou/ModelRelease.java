@@ -15,39 +15,33 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-
 //InputStream和Reader是所有输入流的基类。
 //区别：InputStream面向字节，而Reader面向字符
-public class ModelRelease{
+public class ModelRelease {
 
 	Set<DBFiled> DBFiledSet;
-	
-	
-	String[] parentMainClassField = { "dr", "bill_code", "bill_type", "bill_state", "creatorid", "creator", "createtime",
-			"modifierid", "modifier", "modifytime", "reviewerid", "reviewer", "reviewtime", "tenantid", "company_id",
-			"ts", "attachMgr" };
-	String[] parentSubClassField ={"dr", "tenantid", "company_id", "rowState", "ts"};
+
+	String[] parentMainClassField = { "dr", "bill_code", "bill_type", "bill_state", "creatorid", "creator",
+			"createtime", "modifierid", "modifier", "modifytime", "reviewerid", "reviewer", "reviewtime", "tenantid",
+			"company_id", "ts", "attachMgr" };
+	String[] parentSubClassField = { "dr", "tenantid", "company_id", "rowState", "ts" };
 	// 从父类中继承的变量，要剔除，初始化 主表父类和子表父类
 	List<String> parentVarMain = new ArrayList<String>(Arrays.asList(parentMainClassField));
 
 	List<String> parentVarSub = new ArrayList<String>(Arrays.asList(parentSubClassField));
-	
+
 	List<String> list = new ArrayList<String>();
 
 	// listBean保存读取的所有数据表名和数据字段
 	List<String> listBean;
-	
-	//保存table表名和表的注释
+
+	// 保存table表名和表的注释
 	List<TClass> listTable = new ArrayList<>();
-	
+
 	// listBean1保存读取的数据表1信息
 	List<String> listBean1;
 	// listBean2保存读取的数据表2信息
 	List<String> listBean2 = new ArrayList<>();
-	
-	//String fileName = "";// 文件名，类名
-	String filePath2 = "";
-
 
 	public void readFile(String filePath) {
 		list.clear();
@@ -89,9 +83,10 @@ public class ModelRelease{
 		}
 		System.out.println("\n-----------将所有的字符打印出来-----------------");
 
+		 selectDBFiled();
+
 	}
 
-	
 	/**
 	 * 将sql中字段选择出来，属性类型，属性名称，属性注释
 	 */
@@ -100,7 +95,6 @@ public class ModelRelease{
 		DBFiledSet = new LinkedHashSet<DBFiled>();
 		DBFiled dbFiled = null;
 		TClass t = null;
-		listBean = new ArrayList<String>();
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).contains(",")) {
 				dbFiled = new DBFiled();
@@ -110,7 +104,6 @@ public class ModelRelease{
 				// 这里把数据表的表名存进去，以#作为标识
 				t = new TClass();
 				t.setTableName(reMoveVar(list.get(i + 2)));
-				//listBean.add(reMoveVar(list.get(i + 2)) + "#");
 				dbFiled = new DBFiled();
 
 			} else if (list.get(i).contains("varchar") || list.get(i).contains("int")
@@ -122,58 +115,54 @@ public class ModelRelease{
 			} else if (list.get(i).equals("COMMENT") && !list.get(i).equals("COMMENT=")) {
 				// 把字段的注释加进去
 				dbFiled.setVarDesc(reMoveVar(list.get(i + 1)));
-			}else if(list.get(i).contains("COMMENT=")){
+			} else if (list.get(i).contains("COMMENT=")) {
 				// 把表的注释加进去
-				String str = list.get(i);
-				String string = str.substring(str.indexOf("'") + 1, str.length() - 1);
-				t.setTableDesc(string);
-				if(t!=null){
+				String commentStr = list.get(i);
+				String comment = commentStr.substring(commentStr.indexOf("'") + 1, commentStr.length() - 1);
+				t.setTableDesc(comment);
+
+				for (DBFiled d : DBFiledSet) {
+					System.out.println("------" + d.toString());
+				}
+				System.out.println(DBFiledSet.size());
+
+				t.setDBFiledSet(DBFiledSet);
+
+				if (t != null) {
 					listTable.add(t);
 				}
-				//listBean.add(string);
+				DBFiledSet = new LinkedHashSet<DBFiled>();
+
 			}
 
-			if (dbFiled != null&&dbFiled.getVarType()!=null) {
+			if (dbFiled != null && dbFiled.getVarType() != null) {
 				DBFiledSet.add(dbFiled);
 			}
+
 		}
-
-		System.out.println("---------------打印出所有的属性---------------");
-
-		for (DBFiled b : DBFiledSet) {
-			System.out.println(b.toString());
-		}
-		
-
-	/*	if (list.get(list.size() - 1).contains("COMMENT=")) {
-			// 把表的注释加进去
-			String str = list.get(list.size() - 1);
-			String string = str.substring(str.indexOf("'") + 1, str.length() - 1);
-			listBean.add(string);
-		}*/
 
 		System.out.println("\n--------------listTable中内容-------------------");
-		
-		  for (TClass s : listTable) { System.out.println(s.toString()); }
-		  
-		 
+
+		for (TClass s : listTable) {
+			System.out.println(s.toString());
+		}
+		//return listTable;
 	}
 
-	//获取表名
-	public String getTableName(List<TClass> list,int i){
+	// 获取表名
+	public String getTableName(List<TClass> list, int i) {
 		return list.get(i).getTableName();
 	}
-	//修改表名
-	public void fixTableName(List<TClass> list,int i,String str){
-		 list.get(i).setTableName(str);
+
+	// 修改表名
+	public void fixTableName(List<TClass> list, int i, String str) {
+		list.get(i).setTableName(str);
 	}
-	
 
 	/**
 	 * 写入文件
 	 */
-	public void writeFile(String outFilePath, String parentClass,String className) {
-
+	public void writeFile(String outFilePath, String parentClass, String className) {
 		// 获得文件输出流 假设目标文件名为resutl.txt 覆盖的方式
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(outFilePath + className + ".java", false);
@@ -182,21 +171,14 @@ public class ModelRelease{
 			BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
 
 			String temp_var = "";// 存变量
-			// String temp_fun = "";// 存函数
-			// String temp_funG = "";// 存构造函数
 
-			for (int i = 0; i < listBean.size() - 1; i++) {
-				if (listBean.get(i).contains("#")) {
-					String tableName = listBean.get(i);
-					tableName = tableName.substring(0, tableName.length() - 1);
-					String classDesc = listBean.get(listBean.size() - 1);
-					// 写入类名
-					bufferedWriter.write(writeClassName(tableName, classDesc, parentClass,className));
-				}
-
-			}
-
-			for (DBFiled bean : DBFiledSet) {
+			String tableName = listTable.get(0).getTableName();
+			String tableDesc = listTable.get(0).getTableDesc();
+			bufferedWriter.write(writeClassName(tableName, tableDesc, parentClass, className));
+			
+			System.out.println(listTable.get(0).getDBFiledSet().size());
+			
+			for (DBFiled bean : listTable.get(0).getDBFiledSet()) {
 				if (parentClass == "SuperMainEntity") {
 					if (bean.getVarName() != null && !parentVarMain.contains(bean.getVarName())) {
 						temp_var = temp_var + writeVar2(bean);
@@ -346,10 +328,10 @@ public class ModelRelease{
 	 * @param str
 	 * @return
 	 */
-	public static String writeClassName(String tableName, String classDesc, String parentClass,String className) {
-		//String tem = writeFileName(tableName);
-		String classHeader = "@Entity\r\n" + "@Table(name = \"" + tableName + "\")\r\n" + "@Display(\"" + classDesc + "\")\r\n"
-				+ "public class " + className + " extends " + parentClass + "{\r\n" + "\r\n";
+	public static String writeClassName(String tableName, String classDesc, String parentClass, String className) {
+		// String tem = writeFileName(tableName);
+		String classHeader = "@Entity\r\n" + "@Table(name = \"" + tableName + "\")\r\n" + "@Display(\"" + classDesc
+				+ "\")\r\n" + "public class " + className + " extends " + parentClass + "{\r\n" + "\r\n";
 		return classHeader;
 	}
 
@@ -436,9 +418,7 @@ public class ModelRelease{
 		String filePath = "C:\\Users\\zhaowenr\\Desktop\\sqlToJavaBean\\";
 		String file = filePath + "ss_quy_subsection_acpt.sql";
 		test.readFile(file);
-		test.selectDBFiled();
-		test.writeFile(filePath, "SuperMainEntity", file);
+		test.writeFile(filePath, "SuperMainEntity", "Test");
 	}
-	 
 
 }

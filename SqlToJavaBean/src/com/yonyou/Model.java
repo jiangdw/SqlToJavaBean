@@ -51,7 +51,7 @@ public class Model {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == view.NextButton) {
-					fixTable();
+					nextTable();
 				}
 				
 			}
@@ -104,9 +104,6 @@ public class Model {
 		});
 		
 		
-		
-		
-		
 	}
 
 	
@@ -124,8 +121,6 @@ public class Model {
 			test.fixTableName(test.listTable, i, str);
 		}
 		i++;
-		
-		
 	}
 
 	public void outputDirectory() {
@@ -175,33 +170,52 @@ public class Model {
 				chooseDirectory();
 			}
 			view.inputTextFiled.setText(filepath);// 将文件路径设到JTextField
+			
+			if (filepath != null) {
+				test.readFile(filepath);
+			}
+			
+			view.tNameTextField.setText(test.listTable.get(0).getTableName());
+			
 		}
 	}
 
+	
+	public void nextTable(){
+		view.tNameTextField.setText(test.listTable.get(0).getTableName());
+		view.cNametextField.setText("");
+		
+	}
+	
 	public void dosome() {
+		System.out.println("size+"+test.listTable.size());
 		String parentClass = view.comboBox.getSelectedItem().toString();
-		System.out.println("parentClass-------------------" + parentClass);
+		//System.out.println("parentClass-------------------" + parentClass);
 		String className = view.cNametextField.getText();
 		if (className.equals("")) {
 			showMessage("请输入类名！");
 		}
 
-		String file = view.inputTextFiled.getText();
-		if (file != null) {
+		//String file = view.inputTextFiled.getText();
+		
+		/*if (file != null) {
 			test.readFile(file);
-			test.selectDBFiled();
-		}
+		}*/
 		String outfile = view.outputTextFiled.getText();
 		if (!outfile.equals("")) {
 			outfile = outfile + "\\";
 			System.out.println("outfile-----------" + outfile);
 			test.writeFile(outfile, parentClass, className);
+			test.listTable.remove(0);
 		} else {
 			outfile = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
 			outfile = outfile + "\\";
 			System.out.println(outfile);
 			test.writeFile(outfile, parentClass, className);
+			test.listTable.remove(0);
 		}
+		System.out.println(test.listTable.size());
+		
 	}
 
 	/*
