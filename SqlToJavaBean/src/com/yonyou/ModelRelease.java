@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,9 +46,11 @@ public class ModelRelease {
 	List<TClass> listTable = new ArrayList<>();
 
 	// listBean1保存读取的主表
-	List<String> listMainStr = new ArrayList<String>();;
+	List<String> listMainStr = new ArrayList<String>();
 	// listBean2保存读取的子表
-	List<String> listSubStr = new ArrayList<String>();;
+	List<String> listSubStr = new ArrayList<String>();
+	
+	String filePath = "";
 	
 	
 
@@ -108,7 +109,7 @@ public class ModelRelease {
 			while ((str = br.readLine()) != null) {
 				if(!str.equals("}")){
 					sb.append(str + "\r\n");
-					System.out.println(str);
+					//System.out.println(str);
 				}
 			}
 			if(mainOrSub.equals("main")){
@@ -464,12 +465,14 @@ public class ModelRelease {
 		for (int i = 0; i < mainStr.length; i++) {
 			try {
 				File filepath = FileSystemView.getFileSystemView().getHomeDirectory();
-				System.out.println(filepath +mainStr[i]);
-				FileWriter writer = new FileWriter(filepath+"\\" +mainStr[i]);
+				System.out.println(filePath +"\\"+mainStr[i]);
+				//FileWriter writer = new FileWriter(filePath+"\\" +mainStr[i]);
+				OutputStreamWriter writer= new OutputStreamWriter(new FileOutputStream(filePath+"\\" +mainStr[i]), Charset.forName("utf-8"));
 				BufferedWriter bw = new BufferedWriter(writer);
 				String str ="";
 				for(int j = 0;j < subStr.length;j++){
 					String className = subStr[j].substring(0, subStr[j].indexOf("."));
+					className = className.substring(0,1).toLowerCase()+className.substring(1);
 					String oneToMany = "@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = \"parent\")\r\n"
 							+ "private List<"+className+"> "+className+" = new ArrayList<>();\r\n\r\n";
 					str+=oneToMany;
@@ -492,14 +495,15 @@ public class ModelRelease {
 		for (int i = 0; i < subStr.length; i++) {
 			try {
 				File filepath = FileSystemView.getFileSystemView().getHomeDirectory();
-				System.out.println(filepath +subStr[i]);
-				FileWriter writer = new FileWriter(filepath+"\\" +subStr[i]);
+				System.out.println(filePath+"\\" +subStr[i]);
+				//FileWriter writer = new FileWriter(filePath+"\\" +subStr[i]);
+				OutputStreamWriter writer= new OutputStreamWriter(new FileOutputStream(filePath+"\\" +subStr[i]), Charset.forName("utf-8"));
 				BufferedWriter bw = new BufferedWriter(writer);
 				String str ="";
 				System.out.println(mainStr.length);
 				for(int j = 0;j < mainStr.length;j++){
 					String className = mainStr[0].substring(0, mainStr[0].indexOf("."));
-					
+					className = className.substring(0,1).toLowerCase()+className.substring(1);
 					String manyToOne = "@ManyToOne\r\n@JoinColumn(name = \"pid\",insertable = false,updatable = false)\r\n"
 							+ "private "+className+" parent;\r\n\r\n";
 					str+=manyToOne;

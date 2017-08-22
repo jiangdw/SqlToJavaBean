@@ -43,6 +43,8 @@ public class UI extends JFrame {
     protected JButton confirm2;
     protected JButton mainButton;
     protected JButton subButton;
+    protected JMenuItem connectItem;
+    protected JMenuItem readmeItem;
 	/**
 	 * Create the frame.
 	 */
@@ -67,11 +69,11 @@ public class UI extends JFrame {
 		
 		JMenu mnNewMenu = new JMenu("\u8BF4\u660E");
 		menuBar.add(mnNewMenu);
-		JMenuItem mntmNewMenuItem = new JMenuItem("Readme");
-		mnNewMenu.add(mntmNewMenuItem);
+		readmeItem = new JMenuItem("Readme");
+		mnNewMenu.add(readmeItem);
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("\u8054\u7CFB\u65B9\u5F0F");
-		mnNewMenu.add(mntmNewMenuItem_1);
+		connectItem = new JMenuItem("\u8054\u7CFB\u65B9\u5F0F");
+		mnNewMenu.add(connectItem);
 		
 		chooseFileButton = new JButton("\u6D4F\u89C8\u6587\u4EF6");
 		

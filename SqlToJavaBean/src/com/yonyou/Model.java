@@ -31,6 +31,28 @@ public class Model {
 				}
 			}
 		});
+		
+		view.readmeItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showMessage("该工具是将sql建表语句生成java类，使用Navicat将表的结构导出，需要把表的注释加上");
+				
+			}
+		});
+		
+		view.connectItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == view.connectItem) {
+					showMessage("如果使用过程中出现问题请联系我\n" + "Phone: 18392533494\n" + "Email: liuzhw1@yonyou.com\n"
+							+ "还有不完善的地方，请指正\n");
+				}
+				
+			}
+		});
+
 
 		/**
 		 * 输出监听器
@@ -96,12 +118,10 @@ public class Model {
 	
 	
 	protected void doMainOrSub() {
-		String []mainStr ={ view.mainTextField.getText()};
+		String []mainStr =view.mainTextField.getText().split(" ");
 		String []subStr = view.subTextField.getText().split(" ");
 		test.writeMainOrSub(mainStr,subStr);
 	}
-
-
 
 
 
@@ -114,6 +134,7 @@ public class Model {
 		} else {
 			chooser.setCurrentDirectory(chooser.getSelectedFile());
 		}
+		
 		chooser.setMultiSelectionEnabled(true);
 		chooser.setApproveButtonText("确定");
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);// 只能选择文件
@@ -128,9 +149,10 @@ public class Model {
 			String classNameStr = "";
 			for(int i = 0; i < fileLength; i++){
 				File file = fileArray[i];
-				String filepath = file.getPath();
+				String filepath = file.getParent();
 				classNameStr+=file.getName()+" ";
 				System.out.println("文件路径： "+filepath);
+				test.filePath = filepath;
 				test.readFileJava(file,mainOrSub);
 			}
 			
