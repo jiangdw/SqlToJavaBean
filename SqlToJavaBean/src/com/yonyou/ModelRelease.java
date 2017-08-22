@@ -1,19 +1,27 @@
 package com.yonyou;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.filechooser.FileSystemView;
+
+
 
 //InputStream和Reader是所有输入流的基类。
 //区别：InputStream面向字节，而Reader面向字符
@@ -38,10 +46,12 @@ public class ModelRelease {
 	// 保存table表名和表的注释
 	List<TClass> listTable = new ArrayList<>();
 
-	// listBean1保存读取的数据表1信息
-	List<String> listBean1;
-	// listBean2保存读取的数据表2信息
-	List<String> listBean2 = new ArrayList<>();
+	// listBean1保存读取的主表
+	List<String> listMainStr = new ArrayList<String>();;
+	// listBean2保存读取的子表
+	List<String> listSubStr = new ArrayList<String>();;
+	
+	
 
 	public void readFile(String filePath) {
 		list.clear();
@@ -83,7 +93,42 @@ public class ModelRelease {
 		}
 		System.out.println("\n-----------将所有的字符打印出来-----------------");
 
-		 selectDBFiled();
+		selectDBFiled();
+
+	}
+
+	public void readFileJava(File file,String mainOrSub) {
+		try {
+			StringBuffer sb = new StringBuffer("");
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(new FileInputStream(file), Charset.forName("utf-8")));
+
+			String str = null;
+
+			while ((str = br.readLine()) != null) {
+				if(!str.equals("}")){
+					sb.append(str + "\r\n");
+					System.out.println(str);
+				}
+			}
+			if(mainOrSub.equals("main")){
+				listMainStr.add(sb.toString());
+				System.out.println("main: "+listMainStr.size());
+			}else{
+				listSubStr.add(sb.toString());
+				System.out.println("sub: "+listSubStr.size());
+			}
+			
+			br.close();
+			
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -146,7 +191,7 @@ public class ModelRelease {
 		for (TClass s : listTable) {
 			System.out.println(s.toString());
 		}
-		//return listTable;
+		// return listTable;
 	}
 
 	// 获取表名
@@ -175,9 +220,9 @@ public class ModelRelease {
 			String tableName = listTable.get(0).getTableName();
 			String tableDesc = listTable.get(0).getTableDesc();
 			bufferedWriter.write(writeClassName(tableName, tableDesc, parentClass, className));
-			
+
 			System.out.println(listTable.get(0).getDBFiledSet().size());
-			
+
 			for (DBFiled bean : listTable.get(0).getDBFiledSet()) {
 				if (parentClass == "SuperMainEntity") {
 					if (bean.getVarName() != null && !parentVarMain.contains(bean.getVarName())) {
@@ -409,16 +454,84 @@ public class ModelRelease {
 			return var[0];
 		}
 	}
+	
+	
+	public void writeMainOrSub(String[] mainStr, String[] subStr) {
+		/**
+		 * 处理主表
+		 */
+
+		for (int i = 0; i < mainStr.length; i++) {
+			try {
+				File filepath = FileSystemView.getFileSystemView().getHomeDirectory();
+				System.out.println(filepath +mainStr[i]);
+				FileWriter writer = new FileWriter(filepath+"\\" +mainStr[i]);
+				BufferedWriter bw = new BufferedWriter(writer);
+				String str ="";
+				for(int j = 0;j < subStr.length;j++){
+					String className = subStr[j].substring(0, subStr[j].indexOf("."));
+					String oneToMany = "@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = \"parent\")\r\n"
+							+ "private List<"+className+"> "+className+" = new ArrayList<>();\r\n\r\n";
+					str+=oneToMany;
+					
+				}
+				System.out.println(str);
+				String temp = listMainStr.get(i)+str+"}";
+				bw.write(temp);
+				bw.close();
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * 处理子表
+		 */
+		for (int i = 0; i < subStr.length; i++) {
+			try {
+				File filepath = FileSystemView.getFileSystemView().getHomeDirectory();
+				System.out.println(filepath +subStr[i]);
+				FileWriter writer = new FileWriter(filepath+"\\" +subStr[i]);
+				BufferedWriter bw = new BufferedWriter(writer);
+				String str ="";
+				System.out.println(mainStr.length);
+				for(int j = 0;j < mainStr.length;j++){
+					String className = mainStr[0].substring(0, mainStr[0].indexOf("."));
+					
+					String manyToOne = "@ManyToOne\r\n@JoinColumn(name = \"pid\",insertable = false,updatable = false)\r\n"
+							+ "private "+className+" parent;\r\n\r\n";
+					str+=manyToOne;
+					
+				}
+				System.out.println(str);
+				String temp = listSubStr.get(i)+str+"}";
+				bw.write(temp);
+				bw.close();
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		
+	}
 
 	// ---------------------------------------------------------------
 
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 		ModelRelease test = new ModelRelease();
 
 		String filePath = "C:\\Users\\zhaowenr\\Desktop\\sqlToJavaBean\\";
 		String file = filePath + "ss_quy_subsection_acpt.sql";
 		test.readFile(file);
 		test.writeFile(filePath, "SuperMainEntity", "Test");
-	}
+	}*/
+
+	
 
 }

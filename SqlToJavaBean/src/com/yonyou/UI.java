@@ -38,9 +38,11 @@ public class UI extends JFrame {
     protected JLabel label_3;
     protected JButton outputButton;
     protected JLabel label_4;
-    protected MultiSelectComboBox<String> multiSelectMainComboBox; 
-    protected MultiSelectComboBox<String> multiSelectSubComboBox;
-    protected JButton NextButton;
+    protected JTextField mainTextField;
+    protected JTextField subTextField;
+    protected JButton confirm2;
+    protected JButton mainButton;
+    protected JButton subButton;
 	/**
 	 * Create the frame.
 	 */
@@ -118,11 +120,11 @@ public class UI extends JFrame {
 		
 		confirmButton = new JButton("\u786E\u8BA4");
 		
-		confirmButton.setBounds(424, 251, 130, 23);
+		confirmButton.setBounds(403, 177, 133, 23);
 		contentPane.add(confirmButton);
 		
 		label_2 = new JLabel("\u4E3B\u8868\u4E00\u5BF9\u591A");
-		label_2.setBounds(10, 213, 66, 15);
+		label_2.setBounds(10, 222, 66, 15);
 		contentPane.add(label_2);
 		
 		label_3 = new JLabel("\u5B50\u8868\u591A\u5BF9\u4E00");
@@ -138,50 +140,32 @@ public class UI extends JFrame {
 		label_4.setBounds(130, 94, 200, 15);
 		contentPane.add(label_4);
 		
-		//主表 多选下拉框
-		multiSelectMainComboBox = new MultiSelectComboBox<String>();
-		multiSelectMainComboBox.setSelectionForeground(Color.RED);
-		multiSelectMainComboBox.setSelectionBackground(Color.LIGHT_GRAY);
-		multiSelectMainComboBox.setPreferredSize(new Dimension(300, 26));
-		multiSelectMainComboBox.setPopupBackground(Color.WHITE);
-		multiSelectMainComboBox.setForegroundAndToPopup(Color.BLACK);
-		multiSelectMainComboBox.setBounds(74, 213, 145, 22);
-		contentPane.add(multiSelectMainComboBox);
+		JLabel lblNewLabel_1 = new JLabel("----------------------------------------------------------------------------------------------------------------------------------------------------");
+		lblNewLabel_1.setBounds(13, 206, 553, 15);
+		contentPane.add(lblNewLabel_1);
 		
+		confirm2 = new JButton("\u786E\u8BA4");
+		confirm2.setBounds(84, 293, 93, 23);
+		contentPane.add(confirm2);
 		
-		//子表多选下拉框
-		multiSelectSubComboBox = new MultiSelectComboBox<>();
-		multiSelectSubComboBox.setPreferredSize(new Dimension(300, 26));
-		multiSelectSubComboBox.setBounds(74, 252, 145, 22);
-
-		// 设置颜色
-		multiSelectSubComboBox.setForegroundAndToPopup(Color.BLACK);
-		// comboBox.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-		// comboBox.setPopupBorder(BorderFactory.createLineBorder(Color.RED));
-		multiSelectSubComboBox.setPopupBackground(Color.WHITE);
-		multiSelectSubComboBox.setSelectionBackground(Color.lightGray);
-		multiSelectSubComboBox.setSelectionForeground(Color.RED);
+		mainButton = new JButton("\u9009\u62E9\u4E3B\u8868");
+		mainButton.setBounds(84, 218, 93, 23);
+		contentPane.add(mainButton);
 		
-		contentPane.add(multiSelectSubComboBox);
+		subButton = new JButton("\u9009\u62E9\u5B50\u8868");
+		subButton.setBounds(86, 251, 91, 23);
+		contentPane.add(subButton);
 		
-		NextButton = new JButton("\u4E0B\u4E00\u4E2A");
-		NextButton.setBounds(237, 179, 93, 23);
-		contentPane.add(NextButton);
+		mainTextField = new JTextField();
+		mainTextField.setBounds(187, 219, 346, 21);
+		contentPane.add(mainTextField);
+		mainTextField.setColumns(10);
+		
+		subTextField = new JTextField();
+		subTextField.setBounds(187, 252, 346, 21);
+		contentPane.add(subTextField);
+		subTextField.setColumns(10);
 		
 		setVisible(true);
 	}
-	
-	
-	
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UI frame = new UI();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 }
