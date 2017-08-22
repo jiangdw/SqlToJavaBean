@@ -98,12 +98,7 @@ public class Model {
 	protected void doMainOrSub() {
 		String []mainStr ={ view.mainTextField.getText()};
 		String []subStr = view.subTextField.getText().split(" ");
-		
-		System.out.println(subStr.length);
 		test.writeMainOrSub(mainStr,subStr);
-		
-		
-		
 	}
 
 
@@ -165,7 +160,6 @@ public class Model {
 
 	public void outputDirectory() {
 		// 文件选择对象
-		//JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(chooser.getSelectedFile());
 		chooser.setApproveButtonText("确定");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);// 只能选择文件
